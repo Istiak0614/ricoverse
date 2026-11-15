@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop, main]
+
+jobs:
+  server:
+    name: Server — lint, type-check, build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+      # Steps are skipped until the server/ folder exists (first commits of the repo).
+      - uses: actions/setup-node@v4
+        if: hashFiles('server/package-lock.json') != ''
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - run: npm ci
+        if: hashFiles('server/package-lock.json') != ''
+      - run: npm run lint
+        if: hashFiles('server/package-lock.json') != ''
+      - run: npm run typecheck
+        if: hashFiles('server/package-lock.json') != ''
+      - run: npm run build
+        if: hashFiles('server/package-lock.json') != ''
+
+  client:
+    name: Client — lint, type-check, build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: client
+    steps:
+      - uses: actions/checkout@v4
+      # Steps are skipped until the client/ folder exists (first commits of the repo).
+      - uses: actions/setup-node@v4
+        if: hashFiles('client/package-lock.json') != ''
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - run: npm ci
+        if: hashFiles('client/package-lock.json') != ''
+      - run: npm run lint
+        if: hashFiles('client/package-lock.json') != ''
+      - run: npm run typecheck
+        if: hashFiles('client/package-lock.json') != ''
+      - run: npm run build
+        if: hashFiles('client/package-lock.json') != ''
