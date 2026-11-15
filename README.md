@@ -1,7 +1,3 @@
-# Ricoverse
-
-Ricoverse Web Development Project
-
 # RICOVERSE — Clothing E-commerce
 
 Full-stack store built with **React + Vite + TypeScript** (client) and **Express + MongoDB + TypeScript** (server).
