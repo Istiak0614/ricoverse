@@ -1,0 +1,20 @@
+# Who must review changes in each folder.
+# Integration (team lead) reviews everything by default.
+*                         @Istiak0614
+
+# Frontend / UI
+/client/src/components/   @jawadulhasan730
+/client/src/pages/        @jawadulhasan730
+/client/src/layouts/      @jawadulhasan730
+/client/src/index.css     @jawadulhasan730
+
+# Integration (client glue)
+/client/src/api/          @Istiak0614
+/client/src/hooks/        @Istiak0614
+/client/src/store/        @Istiak0614
+/client/src/routes/       @Istiak0614
+
+# Backend
+/server/                  @Sabbir3049
+/server/src/integrations/ @Istiak0614
+/docs/api-contract.md     @Sabbir3049
