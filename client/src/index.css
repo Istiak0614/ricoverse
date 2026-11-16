@@ -1,0 +1,88 @@
+/* client/src/index.css
+   RICOVERSE design tokens (Tailwind v4).
+   Direction: "quiet luxury" — warm cream and sand surfaces, a deep bronze accent,
+   ink-black actions, an editorial serif for headlines and a mono for small labels.
+   Use the token names in classes: bg-cream, text-bronze, font-display, font-mono, etc. */
+
+@import '@fontsource-variable/fraunces';
+@import '@fontsource-variable/fraunces/wght-italic.css';
+@import '@fontsource-variable/inter';
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/500.css';
+@import 'tailwindcss';
+
+@theme {
+  /* Fonts */
+  --font-display: 'Fraunces Variable', ui-serif, Georgia, serif; /* headlines, product names */
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif; /* body, UI */
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace; /* eyebrow labels, buttons, prices */
+
+  /* Surfaces */
+  --color-paper: #ffffff; /* cards, header */
+  --color-cream: #f3eee6; /* page sections, checkout background */
+  --color-sand: #e7dccb; /* image placeholders, hover fills */
+  --color-taupe: #d4bfa6; /* outer frames, dividers on cream */
+  --color-blush: #fce6e3; /* announcement bar */
+
+  /* Text and actions */
+  --color-ink: #121110; /* primary text, primary buttons */
+  --color-ink-soft: #3d3a36; /* secondary text */
+  --color-muted: #8a847c; /* captions, meta, placeholders */
+  --color-bronze: #6e4e2a; /* brand accent: headline accent, prices, links */
+  --color-bronze-dark: #563b1e;
+  --color-line: #e6e0d6; /* borders, input outlines */
+
+  /* Feedback */
+  --color-success: #3f7a4a;
+  --color-error: #b3412e;
+  --color-warning: #b7832f;
+
+  /* Shape and depth */
+  --radius-card: 0.25rem; /* the design is almost square-cornered */
+  --radius-pill: 9999px;
+  --shadow-card: 0 1px 2px rgb(18 17 16 / 0.04), 0 8px 24px rgb(18 17 16 / 0.06);
+
+  /* Type scale extras (Tailwind keeps text-xs … text-9xl) */
+  --text-eyebrow: 0.6875rem; /* 11px mono labels, e.g. "NEW ARRIVALS" */
+  --text-eyebrow--letter-spacing: 0.14em;
+
+  /* Layout */
+  --container-site: 80rem; /* 1280px max content width */
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-paper text-ink font-sans;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-tight text-balance;
+  }
+
+  :focus-visible {
+    @apply outline-bronze outline-2 outline-offset-2;
+  }
+
+  ::selection {
+    @apply bg-sand text-ink;
+  }
+}
+
+@layer components {
+  /* Centered page width with responsive side padding */
+  .container-site {
+    @apply max-w-site mx-auto w-full px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Small uppercase mono label above a heading: <p class="eyebrow">New arrivals</p> */
+  .eyebrow {
+    @apply text-eyebrow text-muted font-mono uppercase;
+  }
+}
