@@ -1,7 +1,7 @@
 // client/src/pages/account/AccountPage.tsx
-// FRONTEND VERSION: shows mockUser. Integration swaps it for the signed-in user.
-// The full account area (addresses, orders) comes in WEB-9.
-import { mockUser } from '@/mocks/user';
+// Shows the signed-in user. The full account area (addresses, orders) comes in WEB-9.
+// This route is wrapped in <RequireAuth />, so `user` is always set here.
+import { selectUser, useAuthStore } from '@/store/authStore';
 import type { User } from '@/types/user';
 
 const memberSince = (iso: string) =>
@@ -35,5 +35,7 @@ export function AccountView({ user }: { user: User }) {
 }
 
 export function AccountPage() {
-  return <AccountView user={mockUser} />;
+  const user = useAuthStore(selectUser);
+  if (!user) return null;
+  return <AccountView user={user} />;
 }

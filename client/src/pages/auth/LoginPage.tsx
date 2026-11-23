@@ -1,39 +1,40 @@
 // client/src/pages/auth/LoginPage.tsx
-// FRONTEND VERSION: submits to a mock. Integration replaces `handleSubmit` with useLogin().
-import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
+import { getErrorMessage, getErrorStatus, getFieldErrors } from '@/api/axios';
 import { LoginForm } from '@/components/auth/LoginForm';
-import type { LoginValues } from '@/lib/validations/auth';
-
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+import { useLogin } from '@/hooks/useAuth';
 
 export function LoginPage() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [serverError, setServerError] = useState<string | null>(null);
+  const login = useLogin();
+  const location = useLocation();
+  const cameFromProtectedPage = Boolean((location.state as { from?: unknown } | null)?.from);
 
-  const handleSubmit = async (values: LoginValues) => {
-    setIsSubmitting(true);
-    setServerError(null);
-    await wait(800);
-    // Mock: any password except "wrong" succeeds
-    if (values.password === 'wrong') setServerError('Incorrect email or password');
-    else console.info('Mock sign in', values.email);
-    setIsSubmitting(false);
-  };
+  const fieldErrors = getFieldErrors(login.error);
+  const serverError =
+    login.error && getErrorStatus(login.error) !== 400 ? getErrorMessage(login.error) : null;
 
   return (
     <div>
       <p className="eyebrow">Welcome back</p>
       <h1 className="mt-2 text-4xl">Sign in</h1>
       <p className="text-ink-soft mt-3 text-sm">
-        New to RICOVERSE?{' '}
-        <Link to="/register" className="text-bronze underline underline-offset-4">
+        {cameFromProtectedPage ? 'Please sign in to continue. ' : 'New to RICOVERSE? '}
+        <Link
+          to="/register"
+          state={location.state}
+          className="text-bronze underline underline-offset-4"
+        >
           Create an account
         </Link>
       </p>
 
       <div className="mt-8">
-        <LoginForm onSubmit={handleSubmit} isSubmitting={isSubmitting} serverError={serverError} />
+        <LoginForm
+          onSubmit={(values) => login.mutate(values)}
+          isSubmitting={login.isPending}
+          serverError={serverError}
+          fieldErrors={fieldErrors}
+        />
       </div>
     </div>
   );
