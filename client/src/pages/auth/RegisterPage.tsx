@@ -1,29 +1,24 @@
 // client/src/pages/auth/RegisterPage.tsx
-// FRONTEND VERSION: submits to a mock. Integration replaces `handleSubmit` with useRegister().
-import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
+import { getErrorMessage, getErrorStatus, getFieldErrors } from '@/api/axios';
 import { RegisterForm } from '@/components/auth/RegisterForm';
-import type { FieldError } from '@/components/auth/types';
-import type { RegisterValues } from '@/lib/validations/auth';
-
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+import { useRegister } from '@/hooks/useAuth';
+import { toRegisterRequest } from '@/lib/validations/auth';
 
 export function RegisterPage() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState<FieldError[]>([]);
+  const registerUser = useRegister();
+  const location = useLocation();
+  const status = getErrorStatus(registerUser.error);
 
-  const handleSubmit = async (values: RegisterValues) => {
-    setIsSubmitting(true);
-    setFieldErrors([]);
-    await wait(800);
-    // Mock: "taken@example.com" behaves like an existing account
-    if (values.email === 'taken@example.com') {
-      setFieldErrors([{ path: 'email', message: 'An account with this email already exists' }]);
-    } else {
-      console.info('Mock register', values.email);
-    }
-    setIsSubmitting(false);
-  };
+  // 409 = email already used → show it under the email field instead of a banner
+  const fieldErrors =
+    status === 409
+      ? [{ path: 'email', message: getErrorMessage(registerUser.error) }]
+      : getFieldErrors(registerUser.error);
+  const serverError =
+    registerUser.error && status !== 400 && status !== 409
+      ? getErrorMessage(registerUser.error)
+      : null;
 
   return (
     <div>
@@ -31,15 +26,20 @@ export function RegisterPage() {
       <h1 className="mt-2 text-4xl">Create account</h1>
       <p className="text-ink-soft mt-3 text-sm">
         Already have an account?{' '}
-        <Link to="/login" className="text-bronze underline underline-offset-4">
+        <Link
+          to="/login"
+          state={location.state}
+          className="text-bronze underline underline-offset-4"
+        >
           Sign in
         </Link>
       </p>
 
       <div className="mt-8">
         <RegisterForm
-          onSubmit={handleSubmit}
-          isSubmitting={isSubmitting}
+          onSubmit={(values) => registerUser.mutate(toRegisterRequest(values))}
+          isSubmitting={registerUser.isPending}
+          serverError={serverError}
           fieldErrors={fieldErrors}
         />
       </div>
