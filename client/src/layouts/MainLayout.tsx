@@ -3,6 +3,7 @@
 // and footer are built in the Design System module (WEB-2).
 import { Outlet } from 'react-router';
 import { AnnouncementBar } from '@/components/AnnouncementBar';
+import { AccountMenu } from '@/components/auth/AccountMenu';
 import { Logo } from '@/components/Logo';
 
 const YEAR = new Date().getFullYear();
@@ -13,8 +14,13 @@ export function MainLayout() {
       <AnnouncementBar />
 
       <header className="border-line bg-paper border-b">
-        <div className="container-site flex h-16 items-center justify-center">
+        <div className="container-site grid h-16 grid-cols-[1fr_auto_1fr] items-center">
+          <div />
           <Logo />
+          <div className="flex justify-end">
+            {/* Integration replaces this with the signed-in user (WEB-3) */}
+            <AccountMenu user={null} />
+          </div>
         </div>
       </header>
 
