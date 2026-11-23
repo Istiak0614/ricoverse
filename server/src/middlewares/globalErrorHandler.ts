@@ -2,6 +2,7 @@
 // Every error in the app ends here and leaves as the same JSON shape:
 // { success: false, message, errorSources: [{ path, message }], stack? }
 import type { ErrorRequestHandler } from 'express';
+import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import { ZodError } from 'zod';
 import { config } from '../config';
@@ -65,7 +66,23 @@ const normalizeError = (err: unknown): NormalizedError => {
     };
   }
 
-  // 5. Errors we threw on purpose
+  // 5. Bad or expired JWT (access or refresh token)
+  if (err instanceof TokenExpiredError) {
+    return {
+      statusCode: 401,
+      message: 'Your session has expired. Please sign in again',
+      errorSources: [{ path: 'token', message: 'Token expired' }],
+    };
+  }
+  if (err instanceof JsonWebTokenError) {
+    return {
+      statusCode: 401,
+      message: 'Invalid session. Please sign in again',
+      errorSources: [{ path: 'token', message: 'Invalid token' }],
+    };
+  }
+
+  // 6. Errors we threw on purpose
   if (err instanceof AppError) {
     return {
       statusCode: err.statusCode,
@@ -74,7 +91,7 @@ const normalizeError = (err: unknown): NormalizedError => {
     };
   }
 
-  // 6. Anything else is a bug: hide details in production
+  // 7. Anything else is a bug: hide details in production
   const message = err instanceof Error ? err.message : 'Something went wrong';
   return {
     statusCode: 500,

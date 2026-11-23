@@ -1,13 +1,14 @@
 // server/src/routes/index.ts
 // Every module router is mounted here. To add a module, add one line to `moduleRoutes`.
 import { Router } from 'express';
+import { AuthRoutes } from '../modules/auth/auth.routes';
 import { HealthRoutes } from '../modules/health/health.routes';
 
 const router = Router();
 
 const moduleRoutes: { path: string; route: Router }[] = [
   { path: '/health', route: HealthRoutes },
-  // { path: '/auth', route: AuthRoutes },          // WEB-3
+  { path: '/auth', route: AuthRoutes },
   // { path: '/products', route: ProductRoutes },   // WEB-4
 ];
 
